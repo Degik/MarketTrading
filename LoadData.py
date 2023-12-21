@@ -8,14 +8,14 @@ class Data:
     def __init__(self, pathTrain:str, pathTest:str) -> None:
         pass   
         ## TRAIN IMPORT DATASET
-        self.x_train = utils.importDatasetX(self.dataset_train)
-        self.y_train = utils.importDatasetY(self.dataset_train)
+        self.x_train = utils.importDatasetX(pathTrain)
+        self.y_train = utils.importDatasetY(pathTrain)
         # CONVERT DATA FOR TRAINING
         self.x_train = self.x_train.to_numpy()
         self.y_train = self.y_train.to_numpy()
         ## TEST IMPORT DATASET
-        self.x_test = utils.importDatasetX(self.dataset_test)
-        self.y_test = utils.importDatasetY(self.dataset_test)
+        self.x_test = utils.importDatasetX(pathTest)
+        self.y_test = utils.importDatasetY(pathTest)
         # CONVERT DATA FOR TESTING
         self.x_test = self.x_test.to_numpy()
         self.y_test = self.y_test.to_numpy()

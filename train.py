@@ -93,16 +93,15 @@ for i, (interval, learning_rate) in enumerate(product(intervals, learning_rates)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            #TO DO
-            predicted = (outputs > 0.5).float()
-            correct += (predicted == batch_output).sum().item()
-            total += batch_input.size(0)
-        accuracy = correct / total
-        best_accuracy_train = max(best_accuracy_train, accuracy)
-        accuracy_values_train.append(accuracy)
+            # Coefficient of Determination (R²)
+            ss_tot = torch.sum((batch_output - torch.mean(batch_output)) ** 2)
+            ss_res = torch.sum((batch_output - outputs) ** 2)
+            r2 = 1 - ss_res / ss_tot
+        best_accuracy_train = max(best_accuracy_train, r2)
         avg_loss = total_loss / len(data_loader_train)
         #Add to list
         loss_values_train.append(avg_loss)
+        accuracy_values_train.append(r2)
 
 
         total = 0
@@ -116,14 +115,15 @@ for i, (interval, learning_rate) in enumerate(product(intervals, learning_rates)
                 loss = criterion(outputs, batch_output)
                 total_loss += loss.item()
                 #predicted = torch.sign(outputs)
-                predicted = (outputs > 0.5).float()
-                correct += (predicted == batch_output).sum().item()
-                total += batch_input.size(0)
-            accuracy = correct / total
-            best_accuracy_test = max(best_accuracy_test, accuracy)
-            accuracy_values_test.append(accuracy)
+                # Coefficient of Determination (R²)
+                ss_tot = torch.sum((batch_output - torch.mean(batch_output)) ** 2)
+                ss_res = torch.sum((batch_output - outputs) ** 2)
+                r2 = 1 - ss_res / ss_tot
+            best_accuracy_test = max(best_accuracy_test, r2)
             avg_loss = total_loss / len(data_loader_test)
+            #Add to list
             loss_values_test.append(avg_loss)
+            accuracy_values_test.append(r2)
         net.train()
 
     #Save plot loss
@@ -132,7 +132,7 @@ for i, (interval, learning_rate) in enumerate(product(intervals, learning_rates)
     plt.plot(loss_values_test, label = 'Test loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
-    plt.title('Loss per Epoch')
+    plt.title('Loss for Epoch')
     plt.legend()
     plt.savefig(f'{pathName}/Loss.png')
     plt.clf()
@@ -143,12 +143,12 @@ for i, (interval, learning_rate) in enumerate(product(intervals, learning_rates)
     plt.plot(accuracy_values_test, label='Accuracy Test')
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
-    plt.title('Accuracy for Epoch')
+    plt.title('Coefficient of Determination (R²) for Epoch')
     plt.legend()
     plt.savefig(f'{pathName}/Accuracy-test.png')
     plt.clf()
 
-    result = f'Test: {i} - Interval:{interval}, Learning-rate: {learning_rate}, Best-Accuracy-Train: {best_accuracy_train:.4f}, Best-Accuracy-Test: {best_accuracy_test:.4f}'
+    result = f'Test: {i+1} - Interval:{interval}, Learning-rate: {learning_rate}, Best-R²-Train: {best_accuracy_train:.4f}, Best-R²-Test: {best_accuracy_test:.4f}'
     with open(f"resultTest.txt", 'w') as file:
         file.write(result + "\n")
     print(result)
