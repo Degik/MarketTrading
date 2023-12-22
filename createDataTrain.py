@@ -18,4 +18,4 @@ def scarica_dati_e_salva_csv(ticker, inizio, fine, intervallo, nome_file_csv):
     dati.to_csv(nome_file_csv)
 
 # Esempio di utilizzo della funzione
-scarica_dati_e_salva_csv('AAPL', '2023-12-7', '2023-12-14', '1m', 'datasets/dataTrain.csv')
+scarica_dati_e_salva_csv('AAPL', '2023-11-21', '2023-12-21', '1d', 'datasets/dataTrain.csv')

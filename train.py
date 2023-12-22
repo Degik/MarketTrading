@@ -13,12 +13,14 @@ print("TRAINING MARKET V1.0")
 #interval = 0.25
 #learning_rate = 0.8
 #hidden_units = 4
-num_epochs = 500
+num_epochs = 1
 momentum = 0.8
 #GRID SEARCH PARAMETERS
-intervals = [0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60]
-learning_rates = [0.001, 0.005, 0.01, 0.03, 0.05, 0.07, 0.09, 0.1, 0.3, 0.5, 0.7, 0.8, 0.9]
+#intervals = [0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60]
+#learning_rates = [0.001, 0.005, 0.01, 0.03, 0.05, 0.07, 0.09, 0.1, 0.3, 0.5, 0.7, 0.8, 0.9]
 
+intervals = [0.25]
+learning_rates = [0.001]
 
 # PATH
 pathTrain = "datasets/dataTrain.csv"
@@ -39,7 +41,7 @@ for i, (interval, learning_rate) in enumerate(product(intervals, learning_rates)
     # MOVE NET TO GPU
     net = net.to("cuda:0")
     # SET TYPE NET
-    net = net.double()
+    net = net.float()
 
     # OPTIMIZER AND CRITERION
     print("Load MSELoss [criterion]\nLoad SGD [optimizer]")
@@ -78,13 +80,11 @@ for i, (interval, learning_rate) in enumerate(product(intervals, learning_rates)
     net.train()
     for epoch in range(num_epochs):
         total_loss = 0
-        total = 0
-        correct = 0
-        
+        ss_tot = 0
+        ss_res = 0
         for batch_input, batch_output in data_loader_train:
             #Forward pass
             outputs = net(batch_input)
-            print(outputs)
             #Training loss
             loss = criterion(outputs, batch_output)
             #Calculate total loss
@@ -94,19 +94,20 @@ for i, (interval, learning_rate) in enumerate(product(intervals, learning_rates)
             loss.backward()
             optimizer.step()
             # Coefficient of Determination (R²)
-            ss_tot = torch.sum((batch_output - torch.mean(batch_output)) ** 2)
-            ss_res = torch.sum((batch_output - outputs) ** 2)
-            r2 = 1 - ss_res / ss_tot
+            ss_tot += torch.sum((batch_output - torch.mean(batch_output)) ** 2)
+            ss_res += torch.sum((batch_output - outputs) ** 2)
+        
+        r2 = (1 - ss_res / ss_tot).item()
         best_accuracy_train = max(best_accuracy_train, r2)
         avg_loss = total_loss / len(data_loader_train)
         #Add to list
         loss_values_train.append(avg_loss)
         accuracy_values_train.append(r2)
 
-
-        total = 0
-        correct = 0
-        #CALCULATE ACCURACY VAL
+        #TEST SET
+        ss_tot = 0
+        ss_res = 0
+        #
         net.eval()
         total_loss = 0
         with torch.no_grad():
@@ -116,9 +117,10 @@ for i, (interval, learning_rate) in enumerate(product(intervals, learning_rates)
                 total_loss += loss.item()
                 #predicted = torch.sign(outputs)
                 # Coefficient of Determination (R²)
-                ss_tot = torch.sum((batch_output - torch.mean(batch_output)) ** 2)
-                ss_res = torch.sum((batch_output - outputs) ** 2)
-                r2 = 1 - ss_res / ss_tot
+                ss_tot += torch.sum((batch_output - torch.mean(batch_output)) ** 2)
+                ss_res += torch.sum((batch_output - outputs) ** 2)
+            
+            r2 = (1 - ss_res / ss_tot).item()
             best_accuracy_test = max(best_accuracy_test, r2)
             avg_loss = total_loss / len(data_loader_test)
             #Add to list

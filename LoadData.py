@@ -10,17 +10,18 @@ class Data:
         ## TRAIN IMPORT DATASET
         self.x_train = utils.importDatasetX(pathTrain)
         self.y_train = utils.importDatasetY(pathTrain)
-        # CONVERT DATA FOR TRAINING
-        self.x_train = self.x_train.to_numpy()
-        self.y_train = self.y_train.to_numpy()
         ## TEST IMPORT DATASET
         self.x_test = utils.importDatasetX(pathTest)
         self.y_test = utils.importDatasetY(pathTest)
-        # CONVERT DATA FOR TESTING
-        self.x_test = self.x_test.to_numpy()
-        self.y_test = self.y_test.to_numpy()
+        
         
     def convertToTensor(self):
+        # CONVERT DATA FOR TRAINING
+        self.x_train = self.x_train.to_numpy().astype(np.float32)
+        self.y_train = self.y_train.to_numpy().astype(np.float32)
+        # CONVERT DATA FOR TESTING
+        self.x_test = self.x_test.to_numpy().astype(np.float32)
+        self.y_test = self.y_test.to_numpy().astype(np.float32)
         ## CONVERT TO TENSOR TRAIN SET
         self.x_train = torch.tensor(self.x_train, dtype=torch.float32)
         self.y_train = torch.tensor(self.y_train, dtype=torch.float32)

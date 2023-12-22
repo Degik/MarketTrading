@@ -1,0 +1,1 @@
+Test: 1 - Interval:1.2, Learning-rate: 0.0001, Best-R²-Train: 0.0000, Best-R²-Test: 0.0000
