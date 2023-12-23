@@ -1,6 +1,6 @@
 import yfinance as yf
 
-TICKERS = ['TSLA', 'AAPL', 'MSFT', 'NVDA', 'GOOG', 'AMD']
+TICKERS = ['TSLA', 'AAPL', 'MSFT', 'NVDA', 'GOOG', 'AMD', 'ISP.MI', 'LMT']
 
 def get_ticker_data(tickers: list):
     '''
@@ -24,7 +24,7 @@ def get_ticker_data(tickers: list):
         
         try:
             df = data.loc[:, ticker.upper()].dropna()
-            df.to_csv(f'datasets/{ticker}.csv', index = True)
+            df.to_csv(f'netLSTM/datasets/{ticker}.csv', index = True)
         except:
             print(f'Ticker {ticker} failed to download.')
             
