@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from pandas.tseries.offsets import BDay
 
-FEAT_LENGTH = 30
+FEAT_LENGTH = 20
 FEAT_COLS = ['Open', 'Low', 'High', 'Close']
 
 def importDatasetX(file_name:str) -> pd.DataFrame:
@@ -35,9 +35,15 @@ def importDatasetY(file_name:str) -> pd.DataFrame:
 
 
 def get_20_business_days_back():
+    #today = "2023-12-22"
     today = datetime.date.today()
-    business_day_20_back = pd.to_datetime(today) - BDay(21)
+    business_day_20_back = pd.to_datetime(today) - BDay(22)
     return business_day_20_back.strftime('%Y-%m-%d'), today
+
+def get_60_days_back():
+    today = datetime.date.today()
+    date_60_days_back = today - datetime.timedelta(days=55)
+    return date_60_days_back.strftime('%Y-%m-%d'), today
 
 def time_series(df: pd.DataFrame,
                 col: str,
@@ -84,3 +90,18 @@ def get_classification(df: pd.DataFrame) -> pd.DataFrame:
     )
     
     return df
+
+def reshape_x(x: np.array) -> np.array:
+    
+    # Calculate the number of features we have in the nn (assumes all features
+    # are of the same length)
+    num_feats = x.shape[1]//FEAT_LENGTH
+    
+    # Initialise the new x array with the correct size
+    x_reshaped = np.zeros((x.shape[0], FEAT_LENGTH, num_feats))
+    
+    # Populate this array through iteration
+    for n in range(0, num_feats):
+        x_reshaped[:, :, n] = x[:, n*FEAT_LENGTH:(n+1)*FEAT_LENGTH]
+    
+    return x_reshaped

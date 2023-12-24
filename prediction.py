@@ -1,12 +1,13 @@
 import os
 import torch
 import utils
+import NetMarket
 import numpy as np
 import pandas as pd
 import yfinance as yf
 
 pathname = "netLSTM/datasets/predictions"
-ticker = "ISP.MI"
+ticker = "NFLX"
 
 #Download data to predict
 def downloadDataToPredict(data:str):
@@ -19,10 +20,29 @@ def downloadDataToPredict(data:str):
 #Prediction data
 downloadDataToPredict(ticker)
 data = pd.read_csv(f'{pathname}/{ticker}.csv', sep=",")
-print(data)
 data = utils.get_lagged_returns(data)
+data = utils.get_classification(data)
 print(data)
-#data = utils.get_classification(data)
+data = (data.dropna().reset_index(drop = True))
 print(data)
-data = data.replace([np.inf, -np.inf], np.nan).dropna()[[col for col in data.columns if 'feat_' in col] + ['classification']]
+
+data = utils.reshape_x(
+        data[[col for col in data.columns if 'feat_' in col] + ['classification']]
+        .values[:, :-1]
+    )
+
 print(data)
+
+model = torch.load('models/test7/model.pth')
+data = torch.tensor(data)
+data = data.to("cuda:0")
+model = model.to("cuda:0")
+print(data)
+
+model.eval()
+with torch.no_grad():
+    outputs = model(data)
+    
+outputs = torch.max(outputs, 1)
+element = outputs[1][0]
+print(element)

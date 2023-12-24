@@ -1,18 +1,14 @@
 import yfinance as yf
+import utils
 
-TICKERS = ['TSLA', 'AAPL', 'MSFT', 'NVDA', 'GOOG', 'AMD', 'ISP.MI', 'LMT']
+TICKERS = ['TSLA', 'AAPL', 'MSFT', 'NVDA', 'GOOG', 'AMD', 'ISP.MI', 'LMT', 'INTC', 'NKE', 'RTX']
 
 def get_ticker_data(tickers: list):
-    '''
-    Obtain the price data for all tickers specified. The outcome is a csv file
-    of price data for each ticker in the data folder.
     
-    Parameters
-    ----------
-    tickers : list
-        A list of the tickers to download the data for
-    '''
-        
+    #start, end = utils.get_60_days_back()
+    #print(start)
+    #print(end)
+    
     data = yf.download(
         tickers = tickers,
         interval = '1d',
