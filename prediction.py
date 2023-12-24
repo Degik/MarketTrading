@@ -7,7 +7,7 @@ import pandas as pd
 import yfinance as yf
 
 pathname = "netLSTM/datasets/predictions"
-ticker = "NFLX"
+ticker = "INTC"
 
 #Download data to predict
 def downloadDataToPredict(data:str):
@@ -44,5 +44,12 @@ with torch.no_grad():
     outputs = model(data)
     
 outputs = torch.max(outputs, 1)
-element = outputs[1][0]
-print(element)
+print(outputs)
+prediction = outputs[1]
+
+if prediction == 0:
+    print(f'{ticker} è in discesa')
+elif prediction == 1:
+    print(f'{ticker} è stabile')
+elif prediction == 2:
+    print(f'{ticker} è in salita')
