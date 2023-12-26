@@ -7,7 +7,7 @@ import pandas as pd
 import yfinance as yf
 
 pathname = "netLSTM/datasets/predictions"
-ticker = "INTC"
+ticker = "NKE"
 
 #Download data to predict
 def downloadDataToPredict(data:str):

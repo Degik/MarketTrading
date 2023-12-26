@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from pandas.tseries.offsets import BDay
 
-FEAT_LENGTH = 20
+FEAT_LENGTH = 30
 FEAT_COLS = ['Open', 'Low', 'High', 'Close']
 
 def importDatasetX(file_name:str) -> pd.DataFrame:
@@ -37,7 +37,7 @@ def importDatasetY(file_name:str) -> pd.DataFrame:
 def get_20_business_days_back():
     #today = "2023-12-22"
     today = datetime.date.today()
-    business_day_20_back = pd.to_datetime(today) - BDay(22)
+    business_day_20_back = pd.to_datetime(today) - BDay(33)
     return business_day_20_back.strftime('%Y-%m-%d'), today
 
 def get_60_days_back():

@@ -7,7 +7,7 @@ import pandas as pd
 import yfinance as yf
 
 pathname = "netLSTM/datasets/predictions"
-TICKERS = ['RTX', 'NVDA', 'MSFT', 'LMT', 'INTC', 'TSLA', 'AAPL', 'GOOG', 'AMD', 'NKE', 'BA']
+TICKERS = ['RTX', 'NVDA', 'MSFT', 'LMT', 'INTC', 'TSLA', 'AAPL', 'GOOG', 'AMD', 'NKE', 'BA', 'ISP.MI']
 
 #Download data to predict
 def downloadDataToPredict(data:str):
@@ -47,7 +47,7 @@ for ticker in TICKERS:
         
     outputs = torch.max(outputs, 1)
     prediction = outputs[1]
-    
+    prediction = prediction[0]
     
     if prediction == 0:
         print(f'{ticker} sarà in discesa')
